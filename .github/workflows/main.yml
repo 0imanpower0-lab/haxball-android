@@ -9,22 +9,20 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Get Date
-      id: get-date
-      run: |
-        echo "date=$(date -u +'%Y%m%d')" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - name: Cache Buildozer global directory
-      uses: actions/cache@v3
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        path: ~/.buildozer
-        key: buildozer-global-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+        python-version: '3.10'
+
+    - name: Install Buildozer Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libmpdec-dev
+        pip3 install --user --upgrade buildozer Cython virtualenv
 
     - name: Build with Buildozer
-      uses: Artemish/buildozer-action@v1
-      with:
-        command: buildozer android debug
-        repository_root: .
+      run: |
+        export PATH=$PATH:~/.local/bin
+        buildozer android debug
