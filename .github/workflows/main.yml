@@ -28,6 +28,13 @@ jobs:
         sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libmpdec-dev
         pip3 install --user --upgrade buildozer Cython virtualenv
 
+    - name: Configure buildozer.spec for Emulator
+      run: |
+        if [ -f buildozer.spec ]; then
+          # buildozer.spec içindeki mimariyi emülatörlerin açabilmesi için x86_64 ve arm64 yapıyoruz
+          sed -i 's/^android.archs =.*/android.archs = arm64-v8a, x86_64/' buildozer.spec
+        fi
+
     - name: Build APK
       run: |
         export PATH=$PATH:~/.local/bin
@@ -36,5 +43,5 @@ jobs:
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Haxball-Android-APK
+        name: Haxball-Emulator-APK
         path: bin/*.apk
