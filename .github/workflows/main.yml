@@ -1,0 +1,30 @@
+name: Build Android APK Fast
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Get Date
+      id: get-date
+      run: |
+        echo "date=$(date -u +'%Y%m%d')" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Buildozer global directory
+      uses: actions/cache@v3
+      with:
+        path: ~/.buildozer
+        key: buildozer-global-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+
+    - name: Build with Buildozer
+      uses: Artemish/buildozer-action@v1
+      with:
+        command: buildozer android debug
+        repository_root: .
