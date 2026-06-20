@@ -31,7 +31,4 @@ jobs:
     - name: Build APK
       run: |
         export PATH=$PATH:~/.local/bin
-        # Android lisanslarını otomatik olarak onaylama komutu:
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo -e "247a1c17b344f141474d1a437d2163a0e301575f\n84831b9409646a547e30b925b4d97d410d540307\nf9f0a54102b3a14a75e40600c3b9aa36afd2913b\n8933bad161af4178b1185d1a37fbf41ea5269c55\n2f132d725b44438e3bab2db1947d14e362497523\n6d1a6a5d18d8d72793d334e109d2ddc237e6d562" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        yes | buildozer android debug
+        buildozer android debug
