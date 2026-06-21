@@ -28,15 +28,17 @@ jobs:
         sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libmpdec-dev
         pip3 install --user --upgrade buildozer Cython virtualenv
 
-    - name: Configure buildozer.spec for Emulator Fix
+    - name: Optimize buildozer.spec for Pure Mobile
       run: |
         if [ -f buildozer.spec ]; then
-          # Emülatör mimari desteği
-          sed -i 's/^android.archs =.*/android.archs = arm64-v8a, x86_64/' buildozer.spec
+          # Emülatör kalıntılarını silip sadece telefon mimarisini (arm64-v8a) bırakıyoruz
+          sed -i 's/^android.archs =.*/android.archs = arm64-v8a/' buildozer.spec
           
-          # Çökmeyi önleyen kritik emülatör ve tam ekran ayarları (Yoksa ekle, varsa değiştir)
-          sed -i 's/^fullscreen =.*/fullscreen = 0/' buildozer.spec
-          sed -i 's/^#android.meta_data =.*/android.meta_data = android.window.back_activity_background_clickable=true/' buildozer.spec
+          # Telefonlarda çökmeyi önleyen tam ekran (fullscreen) ayarını aktifleştiriyoruz
+          sed -i 's/^fullscreen =.*/fullscreen = 1/' buildozer.spec
+          
+          # Eğer oyun yatay ise yönü kilitle (çökmeyi önler)
+          sed -i 's/^orientation =.*/orientation = landscape/' buildozer.spec
         fi
 
     - name: Build APK
@@ -47,5 +49,5 @@ jobs:
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Haxball-Emulator-APK
+        name: Haxball-Mobile-Only-APK
         path: bin/*.apk
